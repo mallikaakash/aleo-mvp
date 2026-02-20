@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 const COINBASE_URL = "https://api.coinbase.com/v2/prices/BTC-USD/spot";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   try {
@@ -13,13 +15,20 @@ export async function GET() {
     }
     const payload = await response.json();
     const amount = Number(payload?.data?.amount ?? 0);
-    return NextResponse.json({
-      ok: true,
-      symbol: "BTC-USD",
-      source: "coinbase",
-      amount,
-      fetchedAt: Date.now(),
-    });
+    return NextResponse.json(
+      {
+        ok: true,
+        symbol: "BTC-USD",
+        source: "coinbase",
+        amount,
+        fetchedAt: Date.now(),
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        },
+      },
+    );
   } catch {
     return NextResponse.json({ ok: false, error: "Spot fetch failed" }, { status: 500 });
   }

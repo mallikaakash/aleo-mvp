@@ -2,3 +2,13 @@ inputs.md
 README.md
 idea.md
 aleo_flash_markets_build_plan_458d8b55.plan.md
+.DS_Store
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env*
+oracle/.env
+oracle/runtime/
+contracts/**/build/
+contracts/**/outputs/

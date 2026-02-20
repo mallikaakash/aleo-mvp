@@ -14,24 +14,24 @@ if (fs.existsSync(envPath)) {
 }
 
 const config = {
-  mode: process.env.ORACLE_MODE ?? "dry-run",
+  mode: process.env.ORACLE_MODE ?? "leo-cli",
   spotUrl: process.env.COINBASE_SPOT_URL ?? "https://api.coinbase.com/v2/prices/BTC-USD/spot",
   roundLengthSec: Number(process.env.ROUND_LENGTH_SEC ?? "30"),
   closeBufferSec: Number(process.env.CLOSE_BUFFER_SEC ?? "3"),
   retryCount: Number(process.env.ORACLE_RETRY_COUNT ?? "3"),
   retryDelayMs: Number(process.env.ORACLE_RETRY_DELAY_MS ?? "3000"),
   deployerAddress: process.env.DEPLOYER_ADDRESS ?? "",
-  programId: process.env.PROGRAM_ID ?? "flash_markets.aleo",
+  privateKey: process.env.PRIVATE_KEY ?? "",
+  programId: process.env.PROGRAM_ID ?? "flashmarketsam2.aleo",
+  network: process.env.NETWORK ?? "testnet",
+  endpoint: process.env.ENDPOINT ?? "https://api.explorer.provable.com/v1",
   nextRoundDelaySec: Number(process.env.NEXT_ROUND_DELAY_SEC ?? "1"),
   stateFile:
     process.env.ORACLE_STATE_FILE ??
     path.resolve(process.cwd(), "runtime", "state.json"),
-  yesTotalDefault: Number(process.env.YES_TOTAL_DEFAULT ?? "0"),
-  noTotalDefault: Number(process.env.NO_TOTAL_DEFAULT ?? "0"),
 };
 
 let currentRound = null;
-let sequence = 1000;
 const history = [];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -72,15 +72,28 @@ async function withOracleRetry() {
 }
 
 async function executeTransition(name, inputs) {
-  if (config.mode === "dry-run") {
-    console.log(`[dry-run] ${name}`, inputs);
-    return;
-  }
-
   if (config.mode === "leo-cli") {
+    if (!config.privateKey) throw new Error("Missing PRIVATE_KEY for leo-cli mode");
+
+    const args = [
+      "execute",
+      `${config.programId}/${name}`,
+      ...inputs,
+      "--broadcast",
+      "--yes",
+      "--private-key",
+      config.privateKey,
+      "--network",
+      config.network,
+      "--endpoint",
+      config.endpoint,
+      "--no-local",
+    ];
+    console.log(`[leo-cli] ${name}`, inputs);
+
     await new Promise((resolve, reject) => {
-      const proc = spawn("leo", ["execute", config.programId, name, ...inputs], {
-        cwd: path.resolve(process.cwd(), "..", "contracts", "flash_markets"),
+      const proc = spawn(path.resolve(process.env.HOME ?? "~", ".cargo", "bin", "leo"), args, {
+        cwd: process.cwd(),
         stdio: "inherit",
       });
       proc.on("error", reject);
@@ -98,7 +111,7 @@ async function executeTransition(name, inputs) {
 async function createRound(startPrice) {
   const now = Math.floor(Date.now() / 1000);
   const round = {
-    id: sequence++,
+    id: now,
     startTs: now,
     closeTs: now + config.roundLengthSec - config.closeBufferSec,
     endTs: now + config.roundLengthSec,
@@ -131,18 +144,9 @@ async function resolveRound(price) {
   currentRound.status = "RESOLVED";
   currentRound.endPrice = price;
   currentRound.outcome = price > currentRound.startPrice ? "YES" : "NO";
-  currentRound.yesTotal = config.yesTotalDefault;
-  currentRound.noTotal = config.noTotalDefault;
-  const sum = currentRound.yesTotal + currentRound.noTotal;
-  currentRound.sentimentBps =
-    sum === 0
-      ? 0
-      : Math.round(((currentRound.yesTotal - currentRound.noTotal) * 10000) / sum);
   await executeTransition("resolve_round", [
     `${currentRound.id}u64`,
     `${Math.round(price * 1e8)}u64`,
-    `${Math.max(0, Math.floor(currentRound.yesTotal))}u64`,
-    `${Math.max(0, Math.floor(currentRound.noTotal))}u64`,
   ]);
   history.unshift({ ...currentRound });
   persistState();

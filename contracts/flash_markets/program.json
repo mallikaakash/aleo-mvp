@@ -1,5 +1,9 @@
 {
-  "program": "flash_markets.aleo",
+  "program": "flashmarketsam2.aleo",
   "version": "0.1.0",
-  "description": "Private 30-second signal auctions on Aleo."
+  "description": "Private 30-second signal auctions on Aleo.",
+  "license": "MIT",
+  "leo": "3.4.0",
+  "dependencies": null,
+  "dev_dependencies": null
 }
