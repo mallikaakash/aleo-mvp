@@ -19,7 +19,7 @@ export const createWalletAdapters = () => [
     appDescription: "Private flash prediction rounds on Aleo",
     appIconUrl: "/favicon.ico",
     programIdPermissions: {
-      testnetbeta: ["flash_markets.aleo"],
+      testnetbeta: ["flashmarketsam1.aleo"],
       mainnetbeta: [],
     },
   }),
