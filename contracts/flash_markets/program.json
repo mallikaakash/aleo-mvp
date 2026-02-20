@@ -1,0 +1,5 @@
+{
+  "program": "flash_markets.aleo",
+  "version": "0.1.0",
+  "description": "Private 30-second signal auctions on Aleo."
+}
