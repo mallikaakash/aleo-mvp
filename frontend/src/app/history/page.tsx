@@ -4,11 +4,23 @@ import { HistoryList } from "@/components/market/history-list";
 export default function HistoryPage() {
   return (
     <AppShell>
-      <section className="glass-card stack" style={{ padding: "1.2rem" }}>
-        <h1>Resolved Rounds</h1>
-        <h6>Aggregate pools and sentiment only; individual bets remain private.</h6>
-        <HistoryList />
-      </section>
+      <div className="inner-page-bg">
+        <section className="flex flex-col items-center justify-center px-4 md:px-8 py-10 min-h-screen pt-28">
+          <div className="w-full max-w-5xl mx-auto space-y-6">
+            <h1 className="md:text-5xl text-3xl font-sans font-thin uppercase text-left mb-4 inline-block">
+              <span className="bg-orange-400 px-2 rounded-md text-black shadow-md">
+                Resolved Rounds
+              </span>
+            </h1>
+            <p className="text-white/70 text-sm max-w-xl">
+              Aggregate pools and sentiment only; individual bets remain private.
+            </p>
+            <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-5 md:p-6">
+              <HistoryList />
+            </div>
+          </div>
+        </section>
+      </div>
     </AppShell>
   );
 }

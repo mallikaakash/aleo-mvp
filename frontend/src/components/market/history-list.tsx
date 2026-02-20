@@ -39,23 +39,52 @@ export function HistoryList() {
   }, []);
 
   if (!rows.length) {
-    return <h6 className="hint">No resolved rounds yet. Start the oracle loop to populate live history.</h6>;
+    return (
+      <p className="text-sm text-white/60">
+        No resolved rounds yet. Start the oracle loop to populate live history.
+      </p>
+    );
   }
 
   return (
-    <div className="table-list">
+    <div className="space-y-3">
       {rows.map((round) => (
-        <article className="table-item" key={round.id}>
-          <h6>Round #{round.id}</h6>
-          <h6>
-            Outcome: {round.outcome ?? "-"} (${round.startPrice.toLocaleString()} -&gt; $
-            {round.endPrice?.toLocaleString() ?? "-"})
-          </h6>
-          <h6>YES Pool: {round.yesTotal ?? 0} credits</h6>
-          <h6>NO Pool: {round.noTotal ?? 0} credits</h6>
-          <h6>Sentiment: {((round.sentimentBps ?? 0) / 100).toFixed(2)}%</h6>
-          <h6>Status: {round.status}</h6>
-        </article>
+        <div
+          key={round.id}
+          className="backdrop-blur-md bg-white/5 border border-white/15 rounded-xl p-4 hover:bg-white/10 transition-colors"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+            <p className="font-semibold">Round #{round.id}</p>
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-[2px] text-[0.65rem] ${round.status === "RESOLVED"
+                  ? "bg-[#75bfcf]/15 border border-[#75bfcf]/60 text-[#75bfcf]"
+                  : "bg-white/10 border border-white/20 text-white/70"
+                }`}
+            >
+              {round.status}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-white/80">
+            <div>
+              <p className="text-xs text-white/50 uppercase tracking-wide">Outcome</p>
+              <p className="font-medium">{round.outcome ?? "-"}</p>
+            </div>
+            <div>
+              <p className="text-xs text-white/50 uppercase tracking-wide">Price Range</p>
+              <p className="font-mono">
+                ${round.startPrice.toLocaleString()} → ${round.endPrice?.toLocaleString() ?? "-"}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-white/50 uppercase tracking-wide">YES Pool</p>
+              <p className="font-mono">{round.yesTotal ?? 0} credits</p>
+            </div>
+            <div>
+              <p className="text-xs text-white/50 uppercase tracking-wide">Sentiment</p>
+              <p className="font-mono">{((round.sentimentBps ?? 0) / 100).toFixed(2)}%</p>
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   );

@@ -201,91 +201,146 @@ export function MarketDashboard() {
   }
 
   return (
-    <div className="grid-2">
-      <section className="glass-card stack" style={{ padding: "1.2rem" }}>
-        <h1>Flash Round #{round?.id ?? "--"}</h1>
-        <h6>BTC/USD · sealed pools · private orderflow</h6>
-        <div className="metric-row">
-          <h6>Start Price</h6>
-          <h6>{round ? `$${round.startPrice.toLocaleString()}` : "Waiting for oracle..."}</h6>
+    <section className="flex flex-col items-center justify-center px-4 md:px-8 lg:px-12 py-10 min-h-screen pt-28">
+      <div className="w-full max-w-6xl mx-auto space-y-8 text-white">
+        {/* Header */}
+        <div>
+          <h1 className="md:text-5xl text-3xl font-sans font-thin uppercase inline-block leading-tight">
+            <span className="bg-orange-400 px-2 rounded-md text-black shadow-md">
+              Flash Round #{round?.id ?? "--"}
+            </span>
+          </h1>
+          <p className="text-white/70 text-sm mt-2">BTC/USD · sealed pools · private orderflow</p>
         </div>
-        <div className="metric-row">
-          <h6>Betting Closes In</h6>
-          <h6>{closeIn !== null ? `${closeIn}s` : "--"}</h6>
-        </div>
-        <div className="metric-row">
-          <h6>Round Resolves In</h6>
-          <h6>{resolveIn !== null ? `${resolveIn}s` : "--"}</h6>
-        </div>
-        <div className="metric-row">
-          <h6>Status</h6>
-          <h6>{round?.status ?? "BOOTSTRAP"}</h6>
-        </div>
-        <div className="metric-row">
-          <h6>Oracle Feed</h6>
-          <h6>{runtime?.source ?? "bootstrapping"}</h6>
-        </div>
-        <div className="metric-row">
-          <h6>Live Spot</h6>
-          <h6>{spot?.ok && spot.amount ? `$${spot.amount.toLocaleString()}` : "--"}</h6>
-        </div>
-      </section>
 
-      <section className="glass-card stack" style={{ padding: "1.2rem" }}>
-        <h6>Wallet</h6>
-        <WalletArea />
-        <div className="metric-row">
-          <h6>Pick Side</h6>
-          <div className="cta-row">
-            <button className="pressable-button" onClick={() => setSide("YES")}>
-              <h6>{side === "YES" ? "YES Selected" : "YES"}</h6>
-            </button>
-            <button className="pressable-button muted" onClick={() => setSide("NO")}>
-              <h6>{side === "NO" ? "NO Selected" : "NO"}</h6>
-            </button>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4">
+            <p className="text-xs uppercase tracking-wide text-white/70">Start Price</p>
+            <p className="text-2xl font-semibold">
+              {round ? `$${round.startPrice.toLocaleString()}` : "Waiting..."}
+            </p>
+          </div>
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4">
+            <p className="text-xs uppercase tracking-wide text-white/70">Betting Closes In</p>
+            <p className="text-2xl font-semibold">{closeIn !== null ? `${closeIn}s` : "--"}</p>
+          </div>
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4">
+            <p className="text-xs uppercase tracking-wide text-white/70">Round Resolves In</p>
+            <p className="text-2xl font-semibold">{resolveIn !== null ? `${resolveIn}s` : "--"}</p>
+          </div>
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4">
+            <p className="text-xs uppercase tracking-wide text-white/70">Status</p>
+            <p className="text-lg font-semibold capitalize">{round?.status ?? "BOOTSTRAP"}</p>
+            <p className="text-xs text-white/60 mt-1">
+              {runtime?.source ?? "bootstrapping"} · Spot{" "}
+              {spot?.ok && spot.amount ? `$${spot.amount.toLocaleString()}` : "--"}
+            </p>
           </div>
         </div>
-        <div className="metric-row">
-          <h6>Bet Amount (credits)</h6>
-          <input
-            aria-label="bet amount"
-            className="pressable-button"
-            min={1}
-            type="number"
-            value={amount}
-            onChange={(event) => setAmount(event.target.value)}
-          />
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Wallet & Betting Panel */}
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-5 md:p-6 space-y-4">
+            <h2 className="text-xl font-bold">
+              <span className="bg-[#75bfcf] px-2 text-black">Wallet</span>
+            </h2>
+            <WalletArea />
+
+            <div className="space-y-3 border-t border-white/15 pt-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Pick Side</p>
+                <div className="flex gap-2">
+                  <button
+                    className={`px-4 py-2 rounded text-sm font-medium transition-colors ${side === "YES"
+                        ? "bg-[#75bfcf] text-black"
+                        : "border border-white/30 text-white hover:bg-white/10"
+                      }`}
+                    onClick={() => setSide("YES")}
+                  >
+                    {side === "YES" ? "✓ YES" : "YES"}
+                  </button>
+                  <button
+                    className={`px-4 py-2 rounded text-sm font-medium transition-colors ${side === "NO"
+                        ? "bg-orange-400 text-black"
+                        : "border border-white/30 text-white hover:bg-white/10"
+                      }`}
+                    onClick={() => setSide("NO")}
+                  >
+                    {side === "NO" ? "✓ NO" : "NO"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Bet Amount (credits)</p>
+                <input
+                  aria-label="bet amount"
+                  className="w-28 bg-black/40 border border-white/30 rounded px-3 py-2 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[#75bfcf]"
+                  min={1}
+                  type="number"
+                  value={amount}
+                  onChange={(event) => setAmount(event.target.value)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between border-t border-white/15 pt-3">
+                <p className="text-sm font-medium">Projected Return</p>
+                <p className="text-sm font-mono text-[#75bfcf]">~{projected} credits</p>
+              </div>
+            </div>
+
+            <button
+              className="w-full px-4 py-2 bg-[#75bfcf] text-black rounded font-medium hover:bg-[#75bfcf]/80 transition-colors disabled:opacity-50"
+              disabled={!canBet || txBusy}
+              onClick={submitBet}
+            >
+              {txBusy ? "Submitting..." : "Place Bet On-Chain"}
+            </button>
+          </div>
+
+          {/* Claim Panel */}
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-5 md:p-6 space-y-4">
+            <h2 className="text-xl font-bold">
+              <span className="bg-orange-400 px-2 text-black">Claim Rewards</span>
+            </h2>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Claim Round ID</p>
+                <input
+                  aria-label="claim round id"
+                  className="w-28 bg-black/40 border border-white/30 rounded px-3 py-2 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[#75bfcf]"
+                  type="number"
+                  value={claimRoundId}
+                  onChange={(event) => setClaimRoundId(event.target.value)}
+                  placeholder={round?.id ? String(round.id) : "round id"}
+                />
+              </div>
+
+              <button
+                className="w-full px-4 py-2 border border-white/30 text-white rounded font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
+                disabled={txBusy || !walletAddress}
+                onClick={claimReward}
+              >
+                {txBusy ? "Working..." : `Claim ${side} Position`}
+              </button>
+            </div>
+
+            {txFeedback ? (
+              <p className="text-sm text-white/60 bg-black/30 border border-white/10 rounded px-3 py-2">
+                {txFeedback}
+              </p>
+            ) : null}
+
+            <p className="text-xs text-white/50">
+              Smooth MVP behavior: betting locks at 27s, oracle resolves at 30s, next round opens
+              immediately.
+            </p>
+          </div>
         </div>
-        <div className="metric-row">
-          <h6>Projected Return</h6>
-          <h6>~{projected} credits</h6>
-        </div>
-        <div className="wallet-row">
-          <button className="pressable-button" disabled={!canBet || txBusy} onClick={submitBet}>
-            <h6>{txBusy ? "Submitting..." : "Place Bet On-Chain"}</h6>
-          </button>
-        </div>
-        <div className="metric-row">
-          <h6>Claim Round ID</h6>
-          <input
-            aria-label="claim round id"
-            className="pressable-button"
-            type="number"
-            value={claimRoundId}
-            onChange={(event) => setClaimRoundId(event.target.value)}
-            placeholder={round?.id ? String(round.id) : "round id"}
-          />
-        </div>
-        <div className="wallet-row">
-          <button className="pressable-button muted" disabled={txBusy || !walletAddress} onClick={claimReward}>
-            <h6>{txBusy ? "Working..." : `Claim ${side} Position`}</h6>
-          </button>
-        </div>
-        {txFeedback ? <h6 className="hint">{txFeedback}</h6> : null}
-        <h6 className="hint">
-          Smooth MVP behavior: betting locks at 27s, oracle resolves at 30s, next round opens immediately.
-        </h6>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }

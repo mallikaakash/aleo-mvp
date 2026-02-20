@@ -6,24 +6,41 @@ type Props = {
 
 export function AppShell({ children }: Props) {
   return (
-    <div className="page-shell">
-      <nav className="glass-card glass-nav">
-        <h6 className="brand-lock">Aleo Flash Markets</h6>
-        <div className="nav-links">
-          <Link className="nav-link" href="/">
-            <h6>Home</h6>
-          </Link>
-          <Link className="nav-link" href="/trade">
-            <h6>Trade</h6>
-          </Link>
-          <Link className="nav-link" href="/history">
-            <h6>History</h6>
-          </Link>
-          <Link className="nav-link" href="/portfolio">
-            <h6>Portfolio</h6>
-          </Link>
+    <div>
+      {/* Floating glassmorphism pill navbar */}
+      <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-50 px-6">
+        <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-full shadow-2xl px-10 py-4">
+          <div className="absolute inset-0 rounded-full pointer-events-none" />
+          <div className="relative flex items-center justify-center space-x-12">
+            <Link
+              href="/"
+              className="text-white/70 hover:text-white transition-all duration-300 font-medium text-sm"
+            >
+              Home
+            </Link>
+            <Link
+              href="/trade"
+              className="text-white/70 hover:text-white transition-all duration-300 font-medium text-sm"
+            >
+              Trade
+            </Link>
+            <Link
+              href="/history"
+              className="text-white/70 hover:text-white transition-all duration-300 font-medium text-sm"
+            >
+              History
+            </Link>
+            <Link
+              href="/portfolio"
+              className="text-white/70 hover:text-white transition-all duration-300 font-medium text-sm"
+            >
+              Portfolio
+            </Link>
+          </div>
         </div>
       </nav>
+
+      {/* Page content */}
       {children}
     </div>
   );

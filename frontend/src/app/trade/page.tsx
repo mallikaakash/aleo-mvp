@@ -4,7 +4,9 @@ import { MarketDashboard } from "@/components/market/dashboard";
 export default function TradePage() {
   return (
     <AppShell>
-      <MarketDashboard />
+      <div className="inner-page-bg">
+        <MarketDashboard />
+      </div>
     </AppShell>
   );
 }

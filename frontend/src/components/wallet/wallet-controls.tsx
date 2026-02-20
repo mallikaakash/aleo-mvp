@@ -54,7 +54,7 @@ export function WalletControls() {
     const connect = wallet.connect;
 
     const payloadObject = {
-      appName: "Aleo Flash Markets",
+      appName: "Pulse",
       appDescription: "Private flash prediction rounds on Aleo",
       appIconUrl: `${window.location.origin}/favicon.ico`,
       network: "testnetbeta",
@@ -82,8 +82,7 @@ export function WalletControls() {
       }
     }
     throw new Error(
-      `${id} connect failed after payload retries. Last error: ${
-        lastError instanceof Error ? lastError.message : "unknown"
+      `${id} connect failed after payload retries. Last error: ${lastError instanceof Error ? lastError.message : "unknown"
       }`,
     );
   }
@@ -151,38 +150,50 @@ export function WalletControls() {
   const connectCtas = SUPPORTED_WALLETS.map((wallet) => (
     <button
       key={wallet.label}
-      className="pressable-button"
+      className="px-4 py-2 bg-[#75bfcf] text-black rounded font-medium text-sm hover:bg-[#75bfcf]/80 transition-colors disabled:opacity-50"
       disabled={connecting}
       onClick={() => connectWallet(wallet.id)}
     >
-      <h6>Connect {wallet.label}</h6>
+      Connect {wallet.label}
     </button>
   ));
 
   if (!connected) {
     return (
-      <div className="wallet-panel">
-        <div className="wallet-row">{connectCtas}</div>
-        <div className="wallet-row">
-          <button className="pressable-button muted" onClick={detectWallets}>
-            <h6>Detect Wallets</h6>
+      <div className="space-y-3">
+        <div className="flex gap-2 flex-wrap">{connectCtas}</div>
+        <div className="flex gap-2 flex-wrap">
+          <button
+            className="px-4 py-2 border border-white/30 text-white rounded text-sm font-medium hover:bg-white/10 transition-colors"
+            onClick={detectWallets}
+          >
+            Detect Wallets
           </button>
         </div>
-        {detected.length ? <h6 className="hint">Detected: {detected.join(", ")}</h6> : null}
-        {feedback ? <h6 className="hint">{feedback}</h6> : null}
+        {detected.length ? <p className="text-xs text-white/60">Detected: {detected.join(", ")}</p> : null}
+        {feedback ? <p className="text-xs text-white/60">{feedback}</p> : null}
       </div>
     );
   }
 
   return (
-    <div className="wallet-panel">
-      <h6>Connected: {formatAddress(publicKey ?? "")}</h6>
-      <div className="wallet-row">
-        <button className="pressable-button muted" disabled={disconnecting} onClick={disconnectWallet}>
-          <h6>{disconnecting ? "Disconnecting..." : "Disconnect"}</h6>
+    <div className="space-y-3">
+      <div className="flex items-center gap-3">
+        <span className="inline-flex items-center rounded-full bg-[#75bfcf]/15 border border-[#75bfcf]/60 px-2 py-[2px] text-[0.7rem] text-[#75bfcf]">
+          Connected
+        </span>
+        <p className="text-sm font-mono text-white/80">{formatAddress(publicKey ?? "")}</p>
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        <button
+          className="px-4 py-2 border border-white/30 text-white rounded text-sm font-medium hover:bg-white/10 transition-colors disabled:opacity-50"
+          disabled={disconnecting}
+          onClick={disconnectWallet}
+        >
+          {disconnecting ? "Disconnecting..." : "Disconnect"}
         </button>
       </div>
-      {feedback ? <h6 className="hint">{feedback}</h6> : null}
+      {feedback ? <p className="text-xs text-white/60">{feedback}</p> : null}
     </div>
   );
 }

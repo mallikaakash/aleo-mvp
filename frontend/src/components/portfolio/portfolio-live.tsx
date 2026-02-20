@@ -40,36 +40,58 @@ export function PortfolioLive() {
   const noCount = useMemo(() => history.filter((round) => round.outcome === "NO").length, [history]);
 
   return (
-    <div className="stack">
-      {loading ? <h6 className="hint">Loading portfolio telemetry...</h6> : null}
-      <div className="metric-row">
-        <h6>Resolved Rounds Seen</h6>
-        <h6>{resolvedCount}</h6>
+    <div className="space-y-4">
+      {loading ? <p className="text-sm text-white/60">Loading portfolio telemetry...</p> : null}
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="backdrop-blur-md bg-white/5 border border-white/15 rounded-xl p-4">
+          <p className="text-xs uppercase tracking-wide text-white/60">Resolved Rounds</p>
+          <p className="text-2xl font-semibold">{resolvedCount}</p>
+        </div>
+        <div className="backdrop-blur-md bg-white/5 border border-white/15 rounded-xl p-4">
+          <p className="text-xs uppercase tracking-wide text-white/60">Bullish Outcomes</p>
+          <p className="text-2xl font-semibold text-[#75bfcf]">{yesCount}</p>
+        </div>
+        <div className="backdrop-blur-md bg-white/5 border border-white/15 rounded-xl p-4">
+          <p className="text-xs uppercase tracking-wide text-white/60">Bearish Outcomes</p>
+          <p className="text-2xl font-semibold text-orange-400">{noCount}</p>
+        </div>
       </div>
-      <div className="metric-row">
-        <h6>Bullish Outcomes</h6>
-        <h6>{yesCount}</h6>
-      </div>
-      <div className="metric-row">
-        <h6>Bearish Outcomes</h6>
-        <h6>{noCount}</h6>
-      </div>
-      <h6 className="hint">
+
+      <p className="text-xs text-white/50">
         Wallet record indexing is temporarily disabled in this build due a React/runtime conflict from
         third-party wallet hooks. Market telemetry remains live.
-      </h6>
+      </p>
 
-      <div className="table-list">
+      {/* Recent rounds */}
+      <div className="space-y-3">
         {history.slice(0, 8).map((round, index) => (
-          <article className="table-item" key={round.id}>
-            <h6>Record #{index + 1}</h6>
-            <h6>Round #{round.id}</h6>
-            <h6>Status: {round.status}</h6>
-            <h6>Outcome: {round.outcome ?? "-"}</h6>
-            <h6>
-              Price: ${round.startPrice.toLocaleString()} -&gt; ${round.endPrice?.toLocaleString() ?? "-"}
-            </h6>
-          </article>
+          <div
+            key={round.id}
+            className="backdrop-blur-md bg-white/5 border border-white/15 rounded-xl p-4 hover:bg-white/10 transition-colors"
+          >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-wide">Record</p>
+                <p className="font-medium">#{index + 1} · Round #{round.id}</p>
+              </div>
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-wide">Status</p>
+                <p className="font-medium">{round.status}</p>
+              </div>
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-wide">Outcome</p>
+                <p className="font-medium">{round.outcome ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-white/50 uppercase tracking-wide">Price</p>
+                <p className="font-mono">
+                  ${round.startPrice.toLocaleString()} → ${round.endPrice?.toLocaleString() ?? "-"}
+                </p>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
